@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Herp Derp</title>
+    <!-- this script adds react. I am loading v18+ instead of v16 -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <!-- to show the new obj rep to the UI. react DOM -->
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- You need babel to parse JSX in <script> tags -->
+    <script src="https://unpkg.com/babel-standalone@7.0.0-beta.3/babel.js"></script>
+</head>
+<body>
+    <section id="app">
+    </section>
+    <script type="text/babel">
+        // enabled by loading React in head, line 9
+        // .createElement creates an obj representation of the DOM node
+        // pass the element you want, then attributes you want to give it
+        const name = 'Mr. Dodo';
+        const status = 'Extinct'
+
+        /*
+        const nameElement = React.createElement(
+            'h1',
+            null, //this causes TypeError: 'TypeError: URL constructor: null is not a valid URL. 11'
+            name
+        )
+        */
+
+        // this is now a NameComponent:
+        function NameComponent(props){
+            return <h1>{ props.name }</h1>
+            /*
+            return React.createElement(
+                'h1',
+                null, 
+                props.name //note the props prepend
+            )
+            */
+        }
+        /*
+        function StatusComponent(props){
+            return React.createElement(
+                'h2',
+                null,
+                props.status
+            )
+        }
+        */
+        //but, like, even simpler:
+        function StatusComponent(props){
+            return <h2>{ props.status }</h2>
+        }
+
+        // wrapper for the above
+        /*
+        const wrapperElement = React.createElement(
+            'section',
+            {
+                id: 'container'
+            },
+            // nameElement,
+            // statusElement
+            React.createElement(NameComponent, { name:'Mr.Dodo' }),
+            React.createElement(StatusComponent, { status: 'extinct' })
+        )
+        */
+    //    componentize the wrapper too!
+        function App(){
+            return (//adding parenth bc multiline but apparently optional
+                <section id="container"> 
+                    <NameComponent name= { name } /> {/*you defined this earlier in line 22 */}
+                    <StatusComponent status= { status } />
+                </section>
+            )
+        }
+
+        /*Warning: ReactDOM.render is no longer supported in React 18. 
+        Use createRoot instead. Until you switch to the new API, your app will behave 
+        as if it's running React 17. 
+        https://reactjs.org/blog/2022/03/08/react-18-upgrade-guide.html#updates-to-client-rendering-apis*/
+        // enabled by script loaded line 11 - react DOM. where do you want React to mount (i.e., render)?
+        const root = ReactDOM.createRoot(
+            document.querySelector('#app')
+        )
+        // root.render(wrapperElement)
+        root.render(<App />)
+    </script>
+</body>
+</html>
