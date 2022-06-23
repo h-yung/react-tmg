@@ -5,89 +5,110 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Herp Derp</title>
-    <!-- this script adds react. I am loading v18+ instead of v16 -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <!-- to show the new obj rep to the UI. react DOM -->
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <!-- You need babel to parse JSX in <script> tags -->
     <script src="https://unpkg.com/babel-standalone@7.0.0-beta.3/babel.js"></script>
 </head>
 <body>
     <section id="app">
     </section>
+    <!-- <script type="module">
+        import { useState } from 'https://unpkg.com/react@18/umd/react.development.js';
+    </script> -->
     <script type="text/babel">
-        // enabled by loading React in head, line 9
-        // .createElement creates an obj representation of the DOM node
-        // pass the element you want, then attributes you want to give it
-        const name = 'Mr. Dodo';
-        const status = 'Extinct'
 
-        /*
-        const nameElement = React.createElement(
-            'h1',
-            null, //this causes TypeError: 'TypeError: URL constructor: null is not a valid URL. 11'
-            name
-        )
-        */
-
-        // this is now a NameComponent:
-        function NameComponent(props){
-            return <h1>{ props.name }</h1>
-            /*
-            return React.createElement(
-                'h1',
-                null, 
-                props.name //note the props prepend
-            )
-            */
-        }
-        /*
-        function StatusComponent(props){
-            return React.createElement(
-                'h2',
-                null,
-                props.status
-            )
-        }
-        */
-        //but, like, even simpler:
-        function StatusComponent(props){
-            return <h2>{ props.status }</h2>
+        function FrahndsList(props){
+            // this is a stateless functional component. It just receives data from parent component
+            // const list = props.list;         alternate
+            return (
+                // list.map(name => ( 
+                //         <li key={ name }> 
+                //             {/*deviated from walkthrough to put list wrap element in App, and make this each just the li item.
+                //             had to set a const inside here otherwise some issue with props.list.name not passing context?*/}
+                //             {/*iterate; map returns a list (also note this is the key given in App). each item needs a unique key prop, sometimes w library*/}
+                //             { name } 
+                //         </li>
+                //     ))
+                <ul>
+                    {props.list.map(name => (
+                        <li key={name}> 
+                            <span>{name}</span>
+                            {/*here you're coming in from adding the prop from line 85 or so from what App component is returning, adding button for the remove. 
+                                How does it know this is the name you want to remove? bc you are still inside context of the .map, thus "name" is same value for all these attributes */}
+                            <button onClick = { ()=> {props.onRemoveFriend(name)} }>Get rid of this friend </button>
+                        </li>
+                    ))}
+                </ul>
+            )       
         }
 
-        // wrapper for the above
-        /*
-        const wrapperElement = React.createElement(
-            'section',
-            {
-                id: 'container'
-            },
-            // nameElement,
-            // statusElement
-            React.createElement(NameComponent, { name:'Mr.Dodo' }),
-            React.createElement(StatusComponent, { status: 'extinct' })
-        )
-        */
-    //    componentize the wrapper too!
         function App(){
-            return (//adding parenth bc multiline but apparently optional
+            // the order in which the following are declared is v important.
+            // first, you need to assign data (frahnds)
+            // then you can destructure the hook you need fr React (since you can't import inline here. OR you could invoke React.useState())
+            // finally you have what you need to invoke useState and pass the now-defined data as a value for initial state
+            
+            // const frahnds = ['Jake', 'Amy', 'Raymond', 'Charles','Rosa', 'Terry']
+            const { useState } = React; //trying to destructure from React 
+            // OG was:
+                // const [frahndqueue, setFrahndqueue] = useState(frahnds);
+            // for purpose of this exercise,
+            const [frahndqueue, setFrahndqueue] = useState(['Jake', 'Amy', 'Raymond', 'Charles','Rosa', 'Terry']);
+
+            // make a function to add items to the state
+            function handleAddFriend(name){
+                setFrahndqueue(...frahndqueue, name) //I think this is how but should it be frahnds instead...
+            }
+
+            // make a function to remove items from the state
+            function handleRemoveFriend(name){
+                // hey we want to change the state
+                // take what this callback function returns, and merge it with the current state
+                // you could also instead of writing the function directly inside the setState callback, define as a variable you then pass to the setState callback
+                    // ... I think I'll do that for clarity
+                const updatedFrahnds = frahndqueue.filter(friend => friend!==name)
+                setFrahndqueue(updatedFrahnds)
+                    // this then resets frahndqueue to the updated frahnds list
+                    // sooo what happens to frahnds however? it's still... not updated...
+                    //I think missing some step to update state of frahnds
+                    // should this include a line to change initial array frahnds?
+                    // I guess you could instead change the vars so that the initial values are dumped straight into useState
+                        // so, that is what I did and it changed things
+                        // bc this way the OG queue really is altered and retains that altered state within the session
+                        // you would NOT do it this way if you had a backend - you'd pass along the changes so that it persists beyond a session
+                        // currently, changes do not persist from session to session bc the OG array is hardcoded as initial state
+                        // notice that const frahnds is commented out. Original would have:
+            }
+
+            // now where do you invoke these handling methods for rendering?
+            // it needs to happen in the child component -- here, FrahndsList. Add to where you're returning stuff for rendering in this App component for FrahndsList
+            //just pass it as a prop!
+            // now modify the element you're returning from the FriendsList component to add a button that lets user interact.
+
+            return (
                 <section id="container"> 
-                    <NameComponent name= { name } /> {/*you defined this earlier in line 22 */}
-                    <StatusComponent status= { status } />
+                    Hi there
+                    <FrahndsList 
+                        list= {frahndqueue} 
+                        onAddFriend = { handleAddFriend }
+                        onRemoveFriend = { handleRemoveFriend }
+                    />
+                    {/* al universe
+                    <ul>
+                        <FrahndsList list={ frahnds } /> 
+                    </ul>
+                {set data against a named attribute that becomes the prop key}
+                */}
                 </section>
             )
         }
-
-        /*Warning: ReactDOM.render is no longer supported in React 18. 
-        Use createRoot instead. Until you switch to the new API, your app will behave 
-        as if it's running React 17. 
-        https://reactjs.org/blog/2022/03/08/react-18-upgrade-guide.html#updates-to-client-rendering-apis*/
-        // enabled by script loaded line 11 - react DOM. where do you want React to mount (i.e., render)?
         const root = ReactDOM.createRoot(
             document.querySelector('#app')
         )
-        // root.render(wrapperElement)
         root.render(<App />)
     </script>
+    <!-- It seems like occasionally my JSX comments causes an error - not all, but some
+        
+     -->
 </body>
 </html>
