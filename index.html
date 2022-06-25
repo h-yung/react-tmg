@@ -18,7 +18,45 @@
         function FrahndsList(props){
             // this is a stateless functional component. It just receives data from parent component
             // const list = props.list;         alternate
+            
+            const activeTemplate = (
+                <ul>
+                    {props.list
+                        .filter(frahnd => frahnd.active === true)
+                        .map(frahnd => (
+                        <li key={frahnd.key}> {/*create key on creation, not half-assed here*/}
+                            <span>{frahnd.name}</span>
+                            {/*here you're coming in from adding the prop from line 85 or so from what App component is returning, adding button for the remove. 
+                                How does it know this is the name you want to remove? bc you are still inside context of the .map, thus "name" is same value for all these attributes */}
+                            <button onClick = { ()=> {props.onRemoveFriend(frahnd.name)} }>Bye {frahnd.name}!</button>
+                            <button onClick = { ()=> {props.onActivation(frahnd.name, false)} }>Deactivate</button>
+                        </li>
+                    ))}
+                </ul>
+            )
+            const inactiveTemplate = (
+                <ul>
+                    {props.list
+                        .filter(frahnd => frahnd.active === false)
+                        .map(frahnd => (
+                        <li key={props.list.indexOf(frahnd)}> {/*tweaked this too*/}
+                            <span>{frahnd.name}</span>
+                            {/*here you're coming in from adding the prop from line 85 or so from what App component is returning, adding button for the remove. 
+                                How does it know this is the name you want to remove? bc you are still inside context of the .map, thus "name" is same value for all these attributes */}
+                            <button onClick = { ()=> {props.onRemoveFriend(frahnd.name)} }>Bye {frahnd.name}!</button>
+                            <button onClick = { ()=> {props.onActivation(frahnd.name, true)} }>Activate</button>
+                        </li>
+                    ))}
+                </ul>
+            )
             return (
+                
+        // make a conditional template for active or inactive - for the list, not just for the indiv items
+            props.isActive === true ? activeTemplate : inactiveTemplate )    
+            // active friends have a deactivate button
+        // if (props.isActive === false)
+            // inactive friends have an activate button
+
                 // list.map(name => ( 
                 //         <li key={ name }> 
                 //             {/*deviated from walkthrough to put list wrap element in App, and make this each just the li item.
@@ -27,20 +65,8 @@
                 //             { name } 
                 //         </li>
                 //     ))
-                <ul>
-                    {props.list
-                        .filter(frahnd => frahnd.active === true)
-                        .map(frahnd => (
-                        <li key={props.list.indexOf(frahnd)}> {/*tweaked this too*/}
-                            <span>{frahnd.name}</span>
-                            {/*here you're coming in from adding the prop from line 85 or so from what App component is returning, adding button for the remove. 
-                                How does it know this is the name you want to remove? bc you are still inside context of the .map, thus "name" is same value for all these attributes */}
-                            <button onClick = { ()=> {props.onRemoveFriend(frahnd.name)} }>Bye {frahnd.name}!</button>
-                            <button onClick = { ()=> {props.onDeactivate(frahnd.name)} }>Deactivate</button>
-                        </li>
-                    ))}
-                </ul>
-            )       
+                
+                   
         }
 
         // am not using 'return' much unless it is rendering something. 
@@ -57,27 +83,33 @@
             const frahnds = [
                 {
                     name: 'Jake',
-                    active: true
+                    active: true,
+                    key: 1
                 }, 
                 {
                     name: 'Amy',
-                    active: true
+                    active: true,
+                    key: 2
                 }, 
                 {
                     name: 'Raymond',
-                    active: true
+                    active: true,
+                    key: 3
                 }, 
                 {
                     name: 'Charles',
-                    active: true
+                    active: true,
+                    key: 4
                 },
                 {
                     name: 'Rosa',
-                    active: true
+                    active: true,
+                    key: 5
                 }, 
                 {
                     name: 'Terry',
-                    active: true
+                    active: true,
+                    key: 6
                 }
             ] //starting sitch only
                 // const [frahndqueue, setFrahndqueue] = useState(frahnds);
@@ -100,11 +132,10 @@
                 // const allNames = frahndqueue.map(frahnd => frahnd.name)
 
                 if (frahndqueue.filter(frahnd => frahnd.name === name).length === 0){
-                    const updatedFrahndQueue = frahndqueue.concat({name, active: true})
+                    const updatedFrahndQueue = frahndqueue.concat({name, active: true, key: frahndqueue[frahndqueue.length-1].key +1 }) //this is a crappy key handling but 
 
                     setFrahndqueue(updatedFrahndQueue) //now you make frahndqueue equal its updated self with the new frahnd
                     // default adds to active friends category
-                    console.log(updatedFrahndQueue)
                     setNewFrahnd('') //clearing it after submission is best practice I think
                 }
             }
@@ -112,8 +143,18 @@
             // make a function to deactivate friends
                 // options: add attributes to each item/frahnd to distinguish? DOING THIS
                             // make new array?
-            function handleDeactivate(name){
-// YOU ARE HERE. Is this terrible - having a very localized useState?
+
+                            // combine these functions
+            function handleActivation(name, currentSitch){
+                const editedFrahndqueue = frahndqueue.map(frahnd => {
+                    if (frahnd.name === name){
+                        frahnd.active = currentSitch;
+                        return frahnd; //do I need this bit?
+                    } else {
+                        return frahnd;
+                    }
+                })
+                setFrahndqueue(editedFrahndqueue);
             }
 
             // make a function to clear all friends
@@ -170,11 +211,21 @@
                     <h2>Active friends</h2>
                     <FrahndsList 
                         list= {frahndqueue} 
+                        isActive= {true}
                         onAddFriend = { handleAddFriend }
                         onRemoveFriend = { handleRemoveFriend }
-                        onDeactivate = { handleDeactivate }
+                        onActivation = { handleActivation }
+                        // should this also have an Activate function passed but unused?
                     />
                     <h2>Inactive friends</h2>
+                    <FrahndsList 
+                        list= {frahndqueue} 
+                        isActive= {false}
+                        onAddFriend = { handleAddFriend }
+                        onRemoveFriend = { handleRemoveFriend }
+                        onActivation = { handleActivation }
+                        // should this also have a deactivate function passed but unused?
+                    />
                     {/* alt universe
                     <ul>
                         <FrahndsList list={ frahnds } /> 
