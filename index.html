@@ -54,32 +54,32 @@
             
             const { useState } = React; //destructure from React 
             // OG was:
-                const frahnds = [
-                    {
-                        name: 'Jake',
-                        active: true
-                    }, 
-                    {
-                        name: 'Amy',
-                        active: true
-                    }, 
-                    {
-                        name: 'Raymond',
-                        active: true
-                    }, 
-                    {
-                        name: 'Charles',
-                        active: true
-                    },
-                    {
-                        name: 'Rosa',
-                        active: true
-                    }, 
-                    {
-                        name: 'Terry',
-                        active: true
-                    }
-                ] //starting sitch only
+            const frahnds = [
+                {
+                    name: 'Jake',
+                    active: true
+                }, 
+                {
+                    name: 'Amy',
+                    active: true
+                }, 
+                {
+                    name: 'Raymond',
+                    active: true
+                }, 
+                {
+                    name: 'Charles',
+                    active: true
+                },
+                {
+                    name: 'Rosa',
+                    active: true
+                }, 
+                {
+                    name: 'Terry',
+                    active: true
+                }
+            ] //starting sitch only
                 // const [frahndqueue, setFrahndqueue] = useState(frahnds);
             // for purpose of this exercise,
             const [frahndqueue, setFrahndqueue] = useState(frahnds);
@@ -92,15 +92,15 @@
             }
 
             // make a function to add items to the state
-            function handleAddFriend(newName){
+            function handleAddFriend(name){
                 // interestingly when I tried to do setFrahndqueue(...frahndqueue,name) this was a total bust 
                 // it was def the handleAddFriend function here
 
                 // this seems dumb way to handle but tbc
                 // const allNames = frahndqueue.map(frahnd => frahnd.name)
 
-                if (frahndqueue.filter(frahnd => frahnd.name === newName).length === 0){
-                    const updatedFrahndQueue = frahndqueue.concat({newName, active: true})
+                if (frahndqueue.filter(frahnd => frahnd.name === name).length === 0){
+                    const updatedFrahndQueue = frahndqueue.concat({name, active: true})
 
                     setFrahndqueue(updatedFrahndQueue) //now you make frahndqueue equal its updated self with the new frahnd
                     // default adds to active friends category
