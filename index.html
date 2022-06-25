@@ -132,7 +132,7 @@
                 // const allNames = frahndqueue.map(frahnd => frahnd.name)
 
                 if (frahndqueue.filter(frahnd => frahnd.name === name).length === 0){
-                    const updatedFrahndQueue = frahndqueue.concat({name, active: true, key: frahndqueue[frahndqueue.length-1].key +1 }) //this is a crappy key handling but 
+                    const updatedFrahndQueue = frahndqueue.concat({name, active: true, key: frahndqueue[frahndqueue.length-1].key + 1 }) //this is a crappy key handling but 
 
                     setFrahndqueue(updatedFrahndQueue) //now you make frahndqueue equal its updated self with the new frahnd
                     // default adds to active friends category
