@@ -1,0 +1,26 @@
+/* DAY 2 shenanigans */
+h1,
+h2,
+h3 {
+    color: lightseagreen;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+h2 {
+    font-size: 1.2rem;
+}
+h3 {
+    font-size: 1rem;
+}
+
+
+li {
+    margin: 0.5rem 0;
+}
+button {
+    margin: 0 0.2rem;
+}

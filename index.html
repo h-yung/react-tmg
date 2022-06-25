@@ -8,14 +8,12 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/babel-standalone@7.0.0-beta.3/babel.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <section id="app">
     </section>
     <script type="text/babel">
-
-    
-
 
         function FrahndsList(props){
             // this is a stateless functional component. It just receives data from parent component
@@ -30,13 +28,15 @@
                 //         </li>
                 //     ))
                 <ul>
-                    {props.list.map(name => (
-                        <li key={name}> 
-                            <span>{name}</span>
+                    {props.list
+                        .filter(frahnd => frahnd.active === true)
+                        .map(frahnd => (
+                        <li key={props.list.indexOf(frahnd)}> {/*tweaked this too*/}
+                            <span>{frahnd.name}</span>
                             {/*here you're coming in from adding the prop from line 85 or so from what App component is returning, adding button for the remove. 
                                 How does it know this is the name you want to remove? bc you are still inside context of the .map, thus "name" is same value for all these attributes */}
-                            <button onClick = { ()=> {props.onRemoveFriend(name)} }>Bye {name}!</button>
-                            <button onClick = { ()=> {props.onDeactivate(name)} }>Deactivate {name}!</button>
+                            <button onClick = { ()=> {props.onRemoveFriend(frahnd.name)} }>Bye {frahnd.name}!</button>
+                            <button onClick = { ()=> {props.onDeactivate(frahnd.name)} }>Deactivate</button>
                         </li>
                     ))}
                 </ul>
@@ -54,11 +54,36 @@
             
             const { useState } = React; //destructure from React 
             // OG was:
-                // const frahnds = ['Jake', 'Amy', 'Raymond', 'Charles','Rosa', 'Terry']
+                const frahnds = [
+                    {
+                        name: 'Jake',
+                        active: true
+                    }, 
+                    {
+                        name: 'Amy',
+                        active: true
+                    }, 
+                    {
+                        name: 'Raymond',
+                        active: true
+                    }, 
+                    {
+                        name: 'Charles',
+                        active: true
+                    },
+                    {
+                        name: 'Rosa',
+                        active: true
+                    }, 
+                    {
+                        name: 'Terry',
+                        active: true
+                    }
+                ] //starting sitch only
                 // const [frahndqueue, setFrahndqueue] = useState(frahnds);
             // for purpose of this exercise,
-            const [frahndqueue, setFrahndqueue] = useState(['Jake', 'Amy', 'Raymond', 'Charles','Rosa', 'Terry']);
-            const [inactives, setInactives] = useState([])
+            const [frahndqueue, setFrahndqueue] = useState(frahnds);
+            // const [inactives, setInactives] = useState([])
             const [newFrahnd, setNewFrahnd] = useState('')
 
             // set function to eyeball the value in the input for new friend name and set it
@@ -67,19 +92,28 @@
             }
 
             // make a function to add items to the state
-            function handleAddFriend(name){
+            function handleAddFriend(newName){
                 // interestingly when I tried to do setFrahndqueue(...frahndqueue,name) this was a total bust 
                 // it was def the handleAddFriend function here
-                if (name !== '' && !frahndqueue.includes(name)){
-                    const updatedFrahndQueue = frahndqueue.concat(name)
+
+                // this seems dumb way to handle but tbc
+                // const allNames = frahndqueue.map(frahnd => frahnd.name)
+
+                if (frahndqueue.filter(frahnd => frahnd.name === newName).length === 0){
+                    const updatedFrahndQueue = frahndqueue.concat({newName, active: true})
+
                     setFrahndqueue(updatedFrahndQueue) //now you make frahndqueue equal its updated self with the new frahnd
+                    // default adds to active friends category
+                    console.log(updatedFrahndQueue)
                     setNewFrahnd('') //clearing it after submission is best practice I think
                 }
             }
 
             // make a function to deactivate friends
+                // options: add attributes to each item/frahnd to distinguish? DOING THIS
+                            // make new array?
             function handleDeactivate(name){
-// YOU ARE HERE
+// YOU ARE HERE. Is this terrible - having a very localized useState?
             }
 
             // make a function to clear all friends
@@ -94,7 +128,7 @@
                 // take what this callback function returns, and merge it with the current state
                 // you could also instead of writing the function directly inside the setState callback, define as a variable you then pass to the setState callback
                     // ... I think I'll do that for clarity
-                const updatedFrahnds = frahndqueue.filter(friend => friend!==name)
+                const updatedFrahnds = frahndqueue.filter(friend => friend.name!==name)
                 setFrahndqueue(updatedFrahnds)
                     // this then resets frahndqueue to the updated frahnds list
                     // I guess you could instead change the vars so that the initial values are dumped straight into useState
