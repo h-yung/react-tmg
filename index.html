@@ -19,6 +19,7 @@
             // this is a stateless functional component. It just receives data from parent component
             // const list = props.list;         alternate
             
+            // active friends have a deactivate button
             const activeTemplate = (
                 <ul>
                     {props.list
@@ -34,6 +35,7 @@
                     ))}
                 </ul>
             )
+            // inactive friends have an activate button
             const inactiveTemplate = (
                 <ul>
                     {props.list
@@ -53,10 +55,7 @@
                 
         // make a conditional template for active or inactive - for the list, not just for the indiv items
             props.isActive === true ? activeTemplate : inactiveTemplate )    
-            // active friends have a deactivate button
-        // if (props.isActive === false)
-            // inactive friends have an activate button
-
+        
                 // list.map(name => ( 
                 //         <li key={ name }> 
                 //             {/*deviated from walkthrough to put list wrap element in App, and make this each just the li item.
