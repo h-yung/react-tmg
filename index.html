@@ -14,181 +14,110 @@
     <section id="app">
     </section>
     <script type="text/babel">
-
-        function FrahndsList(props){
-            // this is a stateless functional component. It just receives data from parent component
-            // const list = props.list;         alternate
-            
-            // active friends have a deactivate button
-            const activeTemplate = (
-                <ul>
-                    {props.list
-                        .filter(frahnd => frahnd.active === true)
-                        .map(frahnd => (
-                        <li key={frahnd.key}> {/*create key on creation, not half-assed here*/}
-                            <span>{frahnd.name}</span>
-                            {/*here you're coming in from adding the prop from line 85 or so from what App component is returning, adding button for the remove. 
-                                How does it know this is the name you want to remove? bc you are still inside context of the .map, thus "name" is same value for all these attributes */}
-                            <button onClick = { ()=> {props.onRemoveFriend(frahnd.name)} }>Bye {frahnd.name}!</button>
-                            <button onClick = { ()=> {props.onActivation(frahnd.name, false)} }>Deactivate</button>
-                        </li>
-                    ))}
-                </ul>
-            )
-            // inactive friends have an activate button
-            const inactiveTemplate = (
-                <ul>
-                    {props.list
-                        .filter(frahnd => frahnd.active === false)
-                        .map(frahnd => (
-                        <li key={props.list.indexOf(frahnd)}> {/*tweaked this too*/}
-                            <span>{frahnd.name}</span>
-                            {/*here you're coming in from adding the prop from line 85 or so from what App component is returning, adding button for the remove. 
-                                How does it know this is the name you want to remove? bc you are still inside context of the .map, thus "name" is same value for all these attributes */}
-                            <button onClick = { ()=> {props.onRemoveFriend(frahnd.name)} }>Bye {frahnd.name}!</button>
-                            <button onClick = { ()=> {props.onActivation(frahnd.name, true)} }>Activate</button>
-                        </li>
-                    ))}
-                </ul>
-            )
+        // tmg creates 2 separate components rather than templates within same FrahndsList component
+        // filtered inside the App return rather than in the component
+        function ActiveFriends(props){
             return (
-                
-        // make a conditional template for active or inactive - for the list, not just for the indiv items
-            props.isActive === true ? activeTemplate : inactiveTemplate )    
-        
-                // list.map(name => ( 
-                //         <li key={ name }> 
-                //             {/*deviated from walkthrough to put list wrap element in App, and make this each just the li item.
-                //             had to set a const inside here otherwise some issue with props.list.name not passing context?*/}
-                //             {/*iterate; map returns a list (also note this is the key given in App). each item needs a unique key prop, sometimes w library*/}
-                //             { name } 
-                //         </li>
-                //     ))
-                
-                   
+                <section>
+                    <h2>Active Friends</h2>
+                    <ul>
+                        {props.list
+                            .map(frahnd => (
+                                <li key={frahnd.name}> {/*React is zero amounts happy with this*/}
+                                    <span>{frahnd.name}</span>
+                                    <button onClick = { ()=> {props.onRemoveFriend(frahnd.name)} }>Bye {frahnd.name}!</button>
+                                    <button onClick = { ()=> {props.onToggleFriend(frahnd.name)} }>Deactivate</button>
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+            )
+        }
+        function InactiveFriends(props){
+            return (
+                <section>
+                    <h2>Active Friends</h2>
+                    <ul>
+                        {props.list
+                            .map(frahnd => (
+                            <li key={frahnd.name}> {/*React is zero amounts happy with this*/}
+                                <span>{frahnd.name}</span>
+                                <button onClick = { ()=> {props.onRemoveFriend(frahnd.name)} }>Bye {frahnd.name}!</button>
+                                <button onClick = { ()=> {props.onToggleFriend(frahnd.name)} }>Activate</button>
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+            )
         }
 
-        // am not using 'return' much unless it is rendering something. 
-        // so, not even inside handler functions inside App component...
-
         function App(){
-            // the order in which the following are declared is v important.
-            // first, you destructure the hook you need fr React (since you can't import inline here. OR you could invoke React.useState())
-            // then you need to assign data (frahnds)
-            // finally you have what you need to invoke useState and pass the now-defined data as a value for initial state
-            
             const { useState } = React; //destructure from React 
-            // OG was:
-            const frahnds = [
+            const frahnds = [ //tmg also went the route of turning it into array of objs but mentioned you could have made a second array for inactives
+                            // prob simplified as we can assume newly added friend is active
+                            // notice: key property is no more in tmg solution
                 {
                     name: 'Jake',
                     active: true,
-                    key: 1
                 }, 
                 {
                     name: 'Amy',
                     active: true,
-                    key: 2
                 }, 
                 {
                     name: 'Raymond',
                     active: true,
-                    key: 3
                 }, 
                 {
                     name: 'Charles',
                     active: true,
-                    key: 4
                 },
                 {
                     name: 'Rosa',
                     active: true,
-                    key: 5
                 }, 
                 {
                     name: 'Terry',
                     active: true,
-                    key: 6
                 }
             ] //starting sitch only
-                // const [frahndqueue, setFrahndqueue] = useState(frahnds);
-            // for purpose of this exercise,
             const [frahndqueue, setFrahndqueue] = useState(frahnds);
-            // const [inactives, setInactives] = useState([])
             const [newFrahnd, setNewFrahnd] = useState('')
-
-            // set function to eyeball the value in the input for new friend name and set it
             function handleChange(e){
                 setNewFrahnd(e.target.value)
             }
-
-            // make a function to add items to the state
             function handleAddFriend(name){
-                // interestingly when I tried to do setFrahndqueue(...frahndqueue,name) this was a total bust 
-                // it was def the handleAddFriend function here
-
-                // this seems dumb way to handle but tbc
-                // const allNames = frahndqueue.map(frahnd => frahnd.name)
-
-                if (frahndqueue.filter(frahnd => frahnd.name === name).length === 0){
-                    const updatedFrahndQueue = frahndqueue.concat({name, active: true, key: frahndqueue[frahndqueue.length-1].key + 1 }) //this is a crappy key handling but 
-
+                if (frahndqueue.filter(frahnd => frahnd.name === name).length === 0){ //i.e., the friend isn't there already
+                    const updatedFrahndQueue = frahndqueue.concat({name, active: true}) 
                     setFrahndqueue(updatedFrahndQueue) //now you make frahndqueue equal its updated self with the new frahnd
-                    // default adds to active friends category
                     setNewFrahnd('') //clearing it after submission is best practice I think
                 }
             }
-
-            // make a function to deactivate friends
-                // options: add attributes to each item/frahnd to distinguish? DOING THIS
-                            // make new array?
-
-                            // combine these functions
-            function handleActivation(name, currentSitch){
-                const editedFrahndqueue = frahndqueue.map(frahnd => {
-                    if (frahnd.name === name){
-                        frahnd.active = currentSitch;
-                        return frahnd; //do I need this bit?
-                    } else {
-                        return frahnd;
-                    }
-                })
-                setFrahndqueue(editedFrahndqueue);
+            function toggleFriend(name){
+                // tmg makes it a toggle - whatever it was before, make it the opposite.
+                // I think this approach is a bit wasteful
+                // maybe that's bc of how classes work?
+                // modifying this.
+                const frahndToEdit = frahndqueue.find(frahnd => frahnd.name === name)
+                // then remove the friend you have to edit state of 
+                const updatedFrahndQueue = frahndqueue.filter(frahnd => frahnd.name !== name) 
+                    .concat({ //then add a modified vers of the friend you removed
+                        name,
+                        active: !frahndToEdit.active //toggle to opposite of what it was
+                    })
+                // instead of returning this, just update state
+                setFrahndqueue(updatedFrahndQueue);
             }
-
-            // make a function to clear all friends
             function clearAll(){
-                // notice this has to be an empty array not an empty string - otherwise looks like everything wipes out
                 setFrahndqueue([])
             }
-
-            // make a function to remove items from the state
             function handleRemoveFriend(name){
-                // hey we want to change the state
-                // take what this callback function returns, and merge it with the current state
-                // you could also instead of writing the function directly inside the setState callback, define as a variable you then pass to the setState callback
-                    // ... I think I'll do that for clarity
                 const updatedFrahnds = frahndqueue.filter(friend => friend.name!==name)
                 setFrahndqueue(updatedFrahnds)
-                    // this then resets frahndqueue to the updated frahnds list
-                    // I guess you could instead change the vars so that the initial values are dumped straight into useState
-                        // so, that is what I did 
-                        // bc this way the OG queue really is altered and retains that altered state within the session
-                        // you would NOT do it this way if you had a backend - you'd pass along the changes so that it persists beyond a session
-                        // currently, changes do not persist from session to session bc the OG array is hardcoded as initial state
-                        // notice that const frahnds is commented out. Original would have:
             }
-
-            // now where do you invoke these handling methods for rendering?
-            // it needs to happen in the child component -- here, FrahndsList. Add to where you're returning stuff for rendering in this App component for FrahndsList
-            //just pass it as a prop!
-            // now modify the element you're returning from the FriendsList component to add a button that lets user interact.
-
             return (
                 <section id="container"> 
                     <h1>An odd tracker</h1>
-                    {/*Adding form elements to enable usage of handleAddFriend
-                        but why don't I make as a separate component instead? */}
                     <input 
                         type='text'
                         placeholder='Type new friend name'
@@ -203,34 +132,21 @@
                     <button
                         onClick = {clearAll}
                     >Clear all
-                    {/*this is why I wanted my <ul> to be inside App component, not part of the FrahndsList */}
-                     {/*if this were a legit Form element, you'd have to set some handler for handling submit, prevent default behavior, on the Form level.
-                    Luckily this prolly has no default and needs to be explicitly tied to the input element inputs */}
                     </button>
-                    <h2>Active friends</h2>
-                    <FrahndsList 
-                        list= {frahndqueue} 
-                        isActive= {true}
+                    <ActiveFriends 
+                        list= {frahndqueue.filter(frahnd => frahnd.active === true)} 
+                    //  isActive= {false}
                         onAddFriend = { handleAddFriend }
                         onRemoveFriend = { handleRemoveFriend }
-                        onActivation = { handleActivation }
-                        // should this also have an Activate function passed but unused?
+                        onToggleFriend = { toggleFriend }
                     />
-                    <h2>Inactive friends</h2>
-                    <FrahndsList 
-                        list= {frahndqueue} 
-                        isActive= {false}
+                    <InactiveFriends
+                        list= {frahndqueue.filter(frahnd => frahnd.active === false)}
                         onAddFriend = { handleAddFriend }
                         onRemoveFriend = { handleRemoveFriend }
-                        onActivation = { handleActivation }
-                        // should this also have a deactivate function passed but unused?
+                        onToggleFriend = { toggleFriend }
                     />
-                    {/* alt universe
-                    <ul>
-                        <FrahndsList list={ frahnds } /> 
-                    </ul>
-                {set data against a named attribute that becomes the prop key}
-                */}
+                        
                 </section>
             )
         }
@@ -239,8 +155,5 @@
         )
         root.render(<App />)
     </script>
-    <!-- It seems like occasionally my JSX comments causes an error - not all, but some
-        
-     -->
 </body>
 </html>
