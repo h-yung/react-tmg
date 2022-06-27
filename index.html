@@ -13,6 +13,45 @@
 <body>
     <section id="app">
     </section>
+
+    <script>
+        // to simulate async data fetching
+        window.API = {
+            fetchFrahnds(){
+                return new Promise((res, rej) => {
+                    const frahnds = [// frahnds data dumped here
+                        {
+                            name: 'Jake',
+                            active: true,
+                        }, 
+                        {
+                            name: 'Amy',
+                            active: true,
+                        }, 
+                        {
+                            name: 'Raymond',
+                            active: true,
+                        }, 
+                        {
+                            name: 'Charles',
+                            active: true,
+                        },
+                        {
+                            name: 'Rosa',
+                            active: true,
+                        }, 
+                        {
+                            name: 'Terry',
+                            active: true,
+                        }
+                    ]
+                    setTimeout(()=> res(frahnds), 2000) //resolve with the frahnds after 2s. faking the async nature of an ajax req
+                })
+            }
+        }
+    </script>
+
+
     <script type="text/babel">
         // tmg creates 2 separate components rather than templates within same FrahndsList component
         // filtered inside the App return rather than in the component
@@ -52,37 +91,35 @@
         }
 
         function App(){
-            const { useState } = React; //destructure from React 
-            const frahnds = [ //tmg also went the route of turning it into array of objs but mentioned you could have made a second array for inactives
-                            // prob simplified as we can assume newly added friend is active
-                            // notice: key property is no more in tmg solution
-                {
-                    name: 'Jake',
-                    active: true,
-                }, 
-                {
-                    name: 'Amy',
-                    active: true,
-                }, 
-                {
-                    name: 'Raymond',
-                    active: true,
-                }, 
-                {
-                    name: 'Charles',
-                    active: true,
-                },
-                {
-                    name: 'Rosa',
-                    active: true,
-                }, 
-                {
-                    name: 'Terry',
-                    active: true,
-                }
-            ] //starting sitch only
-            const [frahndqueue, setFrahndqueue] = useState(frahnds);
+            const { useState, useEffect } = React; //destructure from React; also add useEffect 
+            
+            let frahnds; /*one must fetch to fill this*/
+            const [frahndqueue, setFrahndqueue] = useState([]); //notice: what was once in 'frahnds' has been ported to a simulated API, thus useState initial value is empty array
+            
             const [newFrahnd, setNewFrahnd] = useState('')
+
+            // we need to fetch data from our fake API at line ~19
+            // the following function is hoisted within App() right? so it should logically work
+            // not using componentDidMount; using useEffect
+            
+            useEffect(()=> { //takes a function as an arg
+                API.fetchFrahnds()
+                    //notice the fake API at line ~19 sends data already as obj - no need to .json() etc.
+                    .then( data => {
+                        frahnds = data;
+                        setFrahndqueue(frahnds)
+                        // console.log(`yo the frahnds are ${frahnds.map(frahnd => frahnd.name)}`)
+                        
+                    })
+                    .catch(err => console.log(err))
+                   /*I triggered infinite loop here originally w/o deps, because set'state' triggers rendering, then useEffect runs after each render
+                   and also each time I guess I am creating a new object and when comparing dependencies, 2 objs are only equal if exactly the same obj
+                   so don't use objs as dependencies*/
+                    
+            },[frahnds]) //not the best solution: figure out how to get rid of dependency entirely
+                         //I had to keep the higher level var "frahnds" so that it would be visible for deps usage here
+                        // I guess alt - if a real API - would be declaring the whole fetch API function inside but just above useEffect for access
+
             function handleChange(e){
                 setNewFrahnd(e.target.value)
             }
@@ -94,18 +131,12 @@
                 }
             }
             function toggleFriend(name){
-                // tmg makes it a toggle - whatever it was before, make it the opposite.
-                // I think this approach is a bit wasteful
-                // maybe that's bc of how classes work?
-                // modifying this.
                 const frahndToEdit = frahndqueue.find(frahnd => frahnd.name === name)
-                // then remove the friend you have to edit state of 
                 const updatedFrahndQueue = frahndqueue.filter(frahnd => frahnd.name !== name) 
                     .concat({ //then add a modified vers of the friend you removed
                         name,
                         active: !frahndToEdit.active //toggle to opposite of what it was
                     })
-                // instead of returning this, just update state
                 setFrahndqueue(updatedFrahndQueue);
             }
             function clearAll(){
