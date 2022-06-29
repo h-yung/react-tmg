@@ -91,7 +91,8 @@
             )
             return (
                 props.list.length === 0 ? Loader() :
-                    props.isActive === true ? activeTemplate : inactiveTemplate )    
+                    props.isActive === true ? activeTemplate : inactiveTemplate )  
+            // if still fetching data, show Loader; otherwise show the appropriate template  
         }
 
         function Loader(){
