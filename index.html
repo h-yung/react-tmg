@@ -14,7 +14,7 @@
     <section id="app">
     </section>
 
-    <script>
+    <!-- <script>
         // to simulate async data fetching
         window.API = {
             fetchFrahnds(){
@@ -49,7 +49,7 @@
                 })
             }
         }
-    </script>
+    </script> -->
 
 
     <script type="text/babel">
@@ -75,7 +75,7 @@
         function InactiveFriends(props){
             return (
                 <section>
-                    <h2>Active Friends</h2>
+                    <h2>Inactive Friends</h2>
                     <ul>
                         {props.list
                             .map(frahnd => (
@@ -92,39 +92,32 @@
 
         function App(){
             const { useState, useEffect } = React; //destructure from React; also add useEffect 
-            
-            let frahnds; /*one must fetch to fill this*/
             const [frahndqueue, setFrahndqueue] = useState([]); //notice: what was once in 'frahnds' has been ported to a simulated API, thus useState initial value is empty array
             
             const [newFrahnd, setNewFrahnd] = useState('')
 
-            // we need to fetch data from our fake API at line ~19
-            // the following function is hoisted within App() right? so it should logically work
-            // not using componentDidMount; using useEffect
-            
-            useEffect(()=> { //takes a function as an arg
-                API.fetchFrahnds()
-                    //notice the fake API at line ~19 sends data already as obj - no need to .json() etc.
-                    .then( data => {
-                        frahnds = data;
+            function fetchPokemon(){
+                let frahnds; /*one must fetch to fill this*/
+                fetch(`https://pokeapi.co/api/v2/pokemon/?limit=6&offset=55`)
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log(data)
+                        const frahnds = data.results.map(pokemon => ({ name: pokemon.name[0].toUpperCase()+pokemon.name.slice(1), active: true }))
                         setFrahndqueue(frahnds)
-                        // console.log(`yo the frahnds are ${frahnds.map(frahnd => frahnd.name)}`)
-                        
                     })
                     .catch(err => console.log(err))
-                   /*I triggered infinite loop here originally w/o deps, because set'state' triggers rendering, then useEffect runs after each render
-                   and also each time I guess I am creating a new object and when comparing dependencies, 2 objs are only equal if exactly the same obj
-                   so don't use objs as dependencies*/
-                    
-            },[frahnds]) //not the best solution: figure out how to get rid of dependency entirely
-                         //I had to keep the higher level var "frahnds" so that it would be visible for deps usage here
-                        // I guess alt - if a real API - would be declaring the whole fetch API function inside but just above useEffect for access
+            }
+
+            useEffect(()=> { //takes a function as an arg
+                fetchPokemon();
+                // beware the infinite loop
+            }, []) //but is this empty dep array true?
 
             function handleChange(e){
                 setNewFrahnd(e.target.value)
             }
             function handleAddFriend(name){
-                if (frahndqueue.filter(frahnd => frahnd.name === name).length === 0){ //i.e., the friend isn't there already
+                if (name !== '' && frahndqueue.filter(frahnd => frahnd.name === name).length === 0){ //i.e., the friend isn't there already and the thing isn't ''
                     const updatedFrahndQueue = frahndqueue.concat({name, active: true}) 
                     setFrahndqueue(updatedFrahndQueue) //now you make frahndqueue equal its updated self with the new frahnd
                     setNewFrahnd('') //clearing it after submission is best practice I think
