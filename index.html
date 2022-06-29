@@ -50,7 +50,7 @@
                             key: 'Terry',
                         }
                     ]
-                    setTimeout(()=> res(frahnds), 2000) //resolve with the frahnds after 2s. faking the async nature of an ajax req
+                    setTimeout(()=> res(frahnds), 5000) //resolve with the frahnds after 5s. faking the async nature of an ajax req
                 })
             }
         }
@@ -96,9 +96,11 @@
         }
 
         function Loader(){
-            return (
-                <h3>I'm loading so be patient, k?</h3>
-            )
+            const loaderText = 'Loading'
+            // window.setInterval(() => {
+            //     loaderText = loaderText.concat('.')
+            // })
+            return loaderText
         }
 
         function App(){
