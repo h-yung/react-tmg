@@ -7,3 +7,6 @@ I'm not using branches the way they're meant to be used. You can check out main 
 ## Day 2
 Have only been using `return` for elements and not at all inside 'handler' functions.
 So much better with hooks because you don't have to deal with the need to .bind anything (classes usage).
+
+## Day 3 (day-3-loading)
+I'm not successfully fooling Suspense or able to use React.lazy to simulate in current setup. Currently the "loader" is therefore not a good representation of actual approach.
