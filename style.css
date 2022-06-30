@@ -15,7 +15,9 @@ h2 {
 }
 h3 {
     font-size: 1rem;
-    color: hsl(16, 100%, 50%);
+    font-style: italic;
+    text-transform: uppercase;
+    color: hsl(13, 91%, 46%);
 }
 
 

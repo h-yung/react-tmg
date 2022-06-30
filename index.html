@@ -49,8 +49,8 @@
                             active: true,
                             key: 'Terry',
                         }
-                    ]
-                    setTimeout(()=> res(frahnds), 5000) //resolve with the frahnds after 5s. faking the async nature of an ajax req
+                    ];
+                    setTimeout(()=> res(frahnds), 2000) //resolve with the frahnds after 2s. faking the async nature of an ajax req
                 })
             }
         }
@@ -89,18 +89,40 @@
                     ))}
                 </ul>
             )
+
             return (
-                props.list.length === 0 ? Loader() :
+                props.isLoading === true ? Loader(props.isLoading) :
                     props.isActive === true ? activeTemplate : inactiveTemplate )  
-            // if still fetching data, show Loader; otherwise show the appropriate template  
+            // if still fetching data as indicated by prop.isLoading, show Loader; otherwise show the appropriate template  
         }
 
-        function Loader(){
-            const loaderText = 'Loading'
-            // window.setInterval(() => {
-            //     loaderText = loaderText.concat('.')
-            // })
-            return loaderText
+        function Loader(value){
+            const { useState } = React;
+            const [loading, setLoading] = useState('Loading')
+            let dot = "."
+            let newText;
+            function updateText(){
+                newText = loading;
+                newText += dot;
+                if (newText.length > 10){
+                    dot = ''
+                    newText = 'Loading'
+                }
+                console.log(newText) //this shows things do stop
+                setLoading(newText) //this also kicks off a new render
+                dot += '.'
+                return newText
+            }
+            const loadCall = setTimeout(updateText, 300)
+            
+            if (value === false){
+                console.log(`this value should say false: ${value}`) //this never prints?
+                clearTimeout(loadCall) //worked w timeout but not interval
+            }
+            
+            return (
+                <h3> { loading }</h3>
+            )
         }
 
         function App(){
@@ -108,12 +130,17 @@
             const [frahndqueue, setFrahndqueue] = useState([]);
             const [newFrahnd, setNewFrahnd] = useState('')
 
+            const [isLoading, setIsLoading] = useState(false)
+
             useEffect(()=> { //takes a function as an arg
+                setIsLoading(true)
                 API.fetchFrahnds()
                     .then(frahnds => {
                         const hereFrahnds = frahnds;
                         setFrahndqueue(hereFrahnds);
+                        setIsLoading(false);
                     })
+                
             }, []) //but is this empty dep array true?
 
             // set function to eyeball the value in the input for new friend name and set it
@@ -176,6 +203,7 @@
 
                         <h2>Active friends</h2>
                             <FrahndsList 
+                                isLoading = { isLoading }
                                 list= {frahndqueue} 
                                 isActive= {true}
                                 onAddFriend = { handleAddFriend }
@@ -185,6 +213,7 @@
                             />
                         <h2>Inactive friends</h2>
                             <FrahndsList 
+                                isLoading = { isLoading }
                                 list= {frahndqueue} 
                                 isActive= {false}
                                 onAddFriend = { handleAddFriend }
