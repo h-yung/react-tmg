@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 /* DAY 2 shenanigans */
 h1,
 h2,
@@ -20,10 +24,8 @@ h3 {
     color: hsl(13, 91%, 46%);
 }
 
+/* DAY 3 SHENANIGANS */
 
-li {
-    margin: 0.5rem 0;
-}
 button {
     margin: 0 0.2rem;
 }
@@ -44,13 +46,61 @@ button[data-name='repo-choice']{
     font-size: 2rem;
     font-weight: bold;
     letter-spacing: 0.2rem;
-    background: hsl(28, 100%, 86%);
-    border: none;
-    border-radius: 3%;
-    transition: background 0.4s ease-in 0s;
+    background: none;
+    border: 2px solid black;
+    border-radius: 10rem;
+    transition: all 0.4s ease-in 0s;
 }
 button[data-name='repo-choice']:hover{
     cursor: pointer;
     background: hsla(202, 100%, 86%, 0.666);
+    color:blue;
+    border: 2px solid blue;
+}
+
+section[data-function='call-results'] {
+    padding: 1rem;
+    width: 100%;
+    /* display:grid;  /*figure this out https://css-tricks.com/snippets/css/complete-guide-grid/*/
+    /* grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    grid-auto-rows: minmax(100px, auto); */ 
+}
+section[data-function='call-results'] > ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+section[data-function='call-results'] > ul ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+} 
+
+.result-item {
+    /* width: 32%; */
+    margin: 0.5rem;
+    padding: 1rem;
+    background:hsla(202, 100%, 86%, 0.666);
+    border-radius: 3%;
+    transition: box-shadow 0.2s ease-in 0s;
+    font-size: 0.8rem;
+    letter-spacing: 0.1rem;
+    line-height: 1.5em;
+    font-family: sans-serif;
+}
+
+.result-item:hover {
+    box-shadow: 0.2rem 0.3rem 1rem hsla(208, 43%, 32%, 0.519);
+}
+
+.result-item a {
+    text-decoration: none;
+}
+
+.result-item li:first-child{
+    font-weight: bold;
 }
 

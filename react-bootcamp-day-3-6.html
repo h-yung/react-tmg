@@ -20,7 +20,7 @@
 
         return fetch(encodedURI)
           .then((data) => data.json())
-          .then((repos) => repos.items)
+          .then((repos) => repos.items) //this is what gets returned
           .catch((error) => {
             console.warn(error)
             return null
@@ -31,80 +31,97 @@
 
   <script type='text/babel'>
 
-  // Loading component
-  function Loading(){
+    // Loading component, deferred for now
+    function Loading(){
+      console.log(`I am loading`)
+      return
+    }
 
-    return
-  }
+    // create List of clickables for language /queryparam selection
+    function RepoChoice(props){
+      const choices = ['all', 'javascript', 'ruby','python']
+      const choiceTemplate = 
+        choices.map(choice => (
+            <button 
+              data-name='repo-choice' 
+              id= { choice }
+              key= { choice }
+              onClick={() => {props.param(choice)}} 
+            >
+              { choice }
+            </button>
+          )
+      )
+      return choiceTemplate
+    }
 
-  // create List of clickables for language /queryparam selection
-  function RepoChoice(props){
-    return
-
-  }
-
-
-  // componentized buttons someday
-  // function RepoChoice(props){
-
-  //   return ()
-  // }
+    // show me the results of the API call
+    function RepoResults(props){
+      // props.data will give you the API results
+      const resultList = props.data.map(result => (
+        <li 
+          key={result.key}
+          className='result-item'
+        > 
+          {/*just cping this next part*/}
+          <ul>
+              <li><a href={result.html_url}>{result.name}</a></li>
+              <li>@{result.owner.login}</li>
+              <li>{result.stargazers_count} stars</li>
+            </ul>
+        </li>
+      ))
+      return (
+        <ul>
+          { resultList }
+        </ul>
+      )
+    }
   
-  
-  // App component
-  function App(){
-    // import modules needed from React
-    // useEffect - get data from the window API
+    // App component
+    function App(){
+      // import modules needed from React
+      const { useState, useEffect, useCallback } = React;
+      // const [query, setQuery] = useState('all');
+      const [results,setResults] = useState([]); //empty until useEffect calls whichRepo default 'all' and populates results
+
+      // get param and data
+      const whichRepo = useCallback(repo => {
+        // useCallback prevents fresh instance creation again of the same function
+          // console.log(`You chose ${repo}!`) this does not work, is undefined/ Runs too soon?
+        // setIsLoading(true);
+          API.fetchPopularRepos(repo)
+            .then(repoResults => {
+                repoResults.map(repoResult => Object.assign(repoResult, {key: repoResults.indexOf(repoResult)}))
+                setResults(repoResults);
+                // setIsLoading(false);
+            })
+      })
+
+      // useEffect - get data from the window API
+      useEffect(()=> { //takes a function as an arg
+        console.log(`useEffects on the move`)
+        whichRepo(); //needs to run initial to pop and ever after is triggered by setResults callback
+      }, []) //seems fine
+      
       // update what's rendered based on the change in queryParam (dependency?)
+      return (
+        <main>
+          <section data-function='choice'>
+            <RepoChoice param= {whichRepo} />
+          </section>
+          
+          <section data-function='call-results'>
+            <RepoResults data={results} />
+          </section>
+        </main>
+      )
+    }
 
-    return (
-      <main>
-        <section data-function='choice'>
-            <button 
-              data-name='repo-choice' 
-              id='all'
-              onClick={() => alert('all')} 
-            >
-              all
-            </button>
-            <button 
-              data-name='repo-choice' 
-              id='javascript'
-              onClick={() => alert('javascript')} 
-            >
-              javascript
-            </button>
-            <button 
-              data-name='repo-choice' 
-              id='ruby'
-              onClick={() => alert('ruby')} 
-            >
-              ruby
-            </button>
-            <button 
-              type='radio' 
-              data-name='repo-choice' 
-              id='python'
-              onClick={() => alert('python')}
-            >
-              python
-          </button>
-        </section>
-        
-        <section>
-          {/*stuff*/}
-        </section>
-      </main>
+    const root = ReactDOM.createRoot(
+      document.querySelector('#app')
     )
-  }
-
-
-
-
-  const root = ReactDOM.createRoot(
-    document.querySelector('#app')
-  )
-  root.render(<App />)
+    root.render(<App />)
 
 
   /*

@@ -90,7 +90,7 @@
                 </ul>
             )
 
-            return (
+            return ( //apparently calling Loader() is real bad! 
                 props.isLoading === true ? Loader(props.isLoading) :
                     props.isActive === true ? activeTemplate : inactiveTemplate )  
             // if still fetching data as indicated by prop.isLoading, show Loader; otherwise show the appropriate template  
