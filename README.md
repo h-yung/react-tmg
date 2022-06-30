@@ -10,3 +10,6 @@ So much better with hooks because you don't have to deal with the need to .bind 
 
 ## Day 3 (day-3-loading)
 I'm not successfully fooling Suspense or able to use React.lazy to simulate in current setup. Currently the "loader" is therefore not a good representation of actual approach.
+
+## Day 3 hw (day-3-hw)
+Why cannot use arrow function inside the return of a component? 🤔
