@@ -6,7 +6,7 @@ I'm not using branches the way they're meant to be used. You can check out main 
 
 ## Day 2
 **Below: A list similar to to-do list, minus edit capabilities**<br>
-<img src="https://raw.githubusercontent.com/h-yung/react-tmg/main/day-2-hw.png?token=GHSAT0AAAAAABVMLGSR73H5EYXHBI4MVO3GYV6DAEQ" alt="day 2 screen" width="200"/> 
+<img src="https://raw.githubusercontent.com/h-yung/react-tmg/main/day-2-hw.png?token=GHSAT0AAAAAABVMLGSR4UAD7EWCAXBRQRVQYV6DMKA" alt="day 2 screen" width="200"/> 
 
 Have only been using `return` for elements and not at all inside 'handler' functions.
 So much better with hooks because you don't have to deal with the need to .bind anything (classes usage).
