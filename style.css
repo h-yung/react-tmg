@@ -28,3 +28,29 @@ button {
     margin: 0 0.2rem;
 }
 
+main {
+    display: flex;
+}
+
+section[data-function='choice'] {
+    margin: 3rem;
+    display: flex;
+    flex-direction: column;
+}
+
+button[data-name='repo-choice']{
+    margin-bottom: 0.5rem;
+    padding: 0.5em 1em;
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: 0.2rem;
+    background: hsl(28, 100%, 86%);
+    border: none;
+    border-radius: 3%;
+    transition: background 0.4s ease-in 0s;
+}
+button[data-name='repo-choice']:hover{
+    cursor: pointer;
+    background: hsla(202, 100%, 86%, 0.666);
+}
+
