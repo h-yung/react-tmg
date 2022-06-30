@@ -16,4 +16,4 @@ Why cannot use arrow function inside the return of a component (RepoChoice)? �
   - "solution": with `{choices}.map(...)` ".map is not a function" - not recognizing the array variable. Use simply `choices.map(...)`
 Taking useCallback out for a spin, thanks to useEffect: [here](https://reactjs.org/docs/hooks-reference.html#usecallback)
   - useCallback: otherwise a new instance of the function keeps getting created, and not equal 
-  - useRef: warning [here](https://medium.com/@teh_builder/ref-objects-inside-useeffect-hooks-eb7c15198780)
+  - useRef? "useRef doesn’t notify you when its content changes. Mutating the .current property doesn’t cause a re-render." Maybe a good thing if I don't want useEffect to run again and want to rerender just with set_State_-callbacks? Warning [here](https://medium.com/@teh_builder/ref-objects-inside-useeffect-hooks-eb7c15198780)
