@@ -13,3 +13,4 @@ I'm not successfully fooling Suspense or able to use React.lazy to simulate in c
 
 ## Day 3 hw (day-3-hw)
 Why cannot use arrow function inside the return of a component (RepoChoice)? 🤔
+  - "solution": with `{choices}.map(...)` ".map is not a function" - not recognizing the array variable. Use simply `choices.map(...)`
