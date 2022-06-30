@@ -5,89 +5,242 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Herp Derp</title>
-    <!-- this script adds react. I am loading v18+ instead of v16 -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <!-- to show the new obj rep to the UI. react DOM -->
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <!-- You need babel to parse JSX in <script> tags -->
     <script src="https://unpkg.com/babel-standalone@7.0.0-beta.3/babel.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <section id="app">
     </section>
     <script type="text/babel">
-        // enabled by loading React in head, line 9
-        // .createElement creates an obj representation of the DOM node
-        // pass the element you want, then attributes you want to give it
-        const name = 'Mr. Dodo';
-        const status = 'Extinct'
 
-        /*
-        const nameElement = React.createElement(
-            'h1',
-            null, //this causes TypeError: 'TypeError: URL constructor: null is not a valid URL. 11'
-            name
-        )
-        */
-
-        // this is now a NameComponent:
-        function NameComponent(props){
-            return <h1>{ props.name }</h1>
-            /*
-            return React.createElement(
-                'h1',
-                null, 
-                props.name //note the props prepend
+        function FrahndsList(props){
+            // this is a stateless functional component. It just receives data from parent component
+            // const list = props.list;         alternate
+            
+            // active friends have a deactivate button
+            const activeTemplate = (
+                <ul>
+                    {props.list
+                        .filter(frahnd => frahnd.active === true)
+                        .map(frahnd => (
+                        <li key={frahnd.key}> {/*create key on creation, not half-assed here*/}
+                            <span>{frahnd.name}</span>
+                            {/*here you're coming in from adding the prop from line 85 or so from what App component is returning, adding button for the remove. 
+                                How does it know this is the name you want to remove? bc you are still inside context of the .map, thus "name" is same value for all these attributes */}
+                            <button onClick = { ()=> {props.onRemoveFriend(frahnd.name)} }>Bye {frahnd.name}!</button>
+                            <button onClick = { ()=> {props.onActivation(frahnd.name, false)} }>Deactivate</button>
+                        </li>
+                    ))}
+                </ul>
             )
-            */
-        }
-        /*
-        function StatusComponent(props){
-            return React.createElement(
-                'h2',
-                null,
-                props.status
+            // inactive friends have an activate button
+            const inactiveTemplate = (
+                <ul>
+                    {props.list
+                        .filter(frahnd => frahnd.active === false)
+                        .map(frahnd => (
+                        <li key={props.list.indexOf(frahnd)}> {/*tweaked this too*/}
+                            <span>{frahnd.name}</span>
+                            {/*here you're coming in from adding the prop from line 85 or so from what App component is returning, adding button for the remove. 
+                                How does it know this is the name you want to remove? bc you are still inside context of the .map, thus "name" is same value for all these attributes */}
+                            <button onClick = { ()=> {props.onRemoveFriend(frahnd.name)} }>Bye {frahnd.name}!</button>
+                            <button onClick = { ()=> {props.onActivation(frahnd.name, true)} }>Activate</button>
+                        </li>
+                    ))}
+                </ul>
             )
-        }
-        */
-        //but, like, even simpler:
-        function StatusComponent(props){
-            return <h2>{ props.status }</h2>
+            return (
+                
+        // make a conditional template for active or inactive - for the list, not just for the indiv items
+            props.isActive === true ? activeTemplate : inactiveTemplate )    
+        
+                // list.map(name => ( 
+                //         <li key={ name }> 
+                //             {/*deviated from walkthrough to put list wrap element in App, and make this each just the li item.
+                //             had to set a const inside here otherwise some issue with props.list.name not passing context?*/}
+                //             {/*iterate; map returns a list (also note this is the key given in App). each item needs a unique key prop, sometimes w library*/}
+                //             { name } 
+                //         </li>
+                //     ))
+                
+                   
         }
 
-        // wrapper for the above
-        /*
-        const wrapperElement = React.createElement(
-            'section',
-            {
-                id: 'container'
-            },
-            // nameElement,
-            // statusElement
-            React.createElement(NameComponent, { name:'Mr.Dodo' }),
-            React.createElement(StatusComponent, { status: 'extinct' })
-        )
-        */
-    //    componentize the wrapper too!
+        // am not using 'return' much unless it is rendering something. 
+        // so, not even inside handler functions inside App component...
+
         function App(){
-            return (//adding parenth bc multiline but apparently optional
+            // the order in which the following are declared is v important.
+            // first, you destructure the hook you need fr React (since you can't import inline here. OR you could invoke React.useState())
+            // then you need to assign data (frahnds)
+            // finally you have what you need to invoke useState and pass the now-defined data as a value for initial state
+            
+            const { useState } = React; //destructure from React 
+            // OG was:
+            const frahnds = [
+                {
+                    name: 'Jake',
+                    active: true,
+                    key: 1
+                }, 
+                {
+                    name: 'Amy',
+                    active: true,
+                    key: 2
+                }, 
+                {
+                    name: 'Raymond',
+                    active: true,
+                    key: 3
+                }, 
+                {
+                    name: 'Charles',
+                    active: true,
+                    key: 4
+                },
+                {
+                    name: 'Rosa',
+                    active: true,
+                    key: 5
+                }, 
+                {
+                    name: 'Terry',
+                    active: true,
+                    key: 6
+                }
+            ] //starting sitch only
+                // const [frahndqueue, setFrahndqueue] = useState(frahnds);
+            // for purpose of this exercise,
+            const [frahndqueue, setFrahndqueue] = useState(frahnds);
+            // const [inactives, setInactives] = useState([])
+            const [newFrahnd, setNewFrahnd] = useState('')
+
+            // set function to eyeball the value in the input for new friend name and set it
+            function handleChange(e){
+                setNewFrahnd(e.target.value)
+            }
+
+            // make a function to add items to the state
+            function handleAddFriend(name){
+                // interestingly when I tried to do setFrahndqueue(...frahndqueue,name) this was a total bust 
+                // it was def the handleAddFriend function here
+
+                // this seems dumb way to handle but tbc
+                // const allNames = frahndqueue.map(frahnd => frahnd.name)
+
+                if (frahndqueue.filter(frahnd => frahnd.name === name).length === 0){
+                    const updatedFrahndQueue = frahndqueue.concat({name, active: true, key: frahndqueue[frahndqueue.length-1].key + 1 }) //this is a crappy key handling but 
+
+                    setFrahndqueue(updatedFrahndQueue) //now you make frahndqueue equal its updated self with the new frahnd
+                    // default adds to active friends category
+                    setNewFrahnd('') //clearing it after submission is best practice I think
+                }
+            }
+
+            // make a function to deactivate friends
+                // options: add attributes to each item/frahnd to distinguish? DOING THIS
+                            // make new array?
+
+                            // combine these functions
+            function handleActivation(name, currentSitch){
+                const editedFrahndqueue = frahndqueue.map(frahnd => {
+                    if (frahnd.name === name){
+                        frahnd.active = currentSitch;
+                        return frahnd; //do I need this bit?
+                    } else {
+                        return frahnd;
+                    }
+                })
+                setFrahndqueue(editedFrahndqueue);
+            }
+
+            // make a function to clear all friends
+            function clearAll(){
+                // notice this has to be an empty array not an empty string - otherwise looks like everything wipes out
+                setFrahndqueue([])
+            }
+
+            // make a function to remove items from the state
+            function handleRemoveFriend(name){
+                // hey we want to change the state
+                // take what this callback function returns, and merge it with the current state
+                // you could also instead of writing the function directly inside the setState callback, define as a variable you then pass to the setState callback
+                    // ... I think I'll do that for clarity
+                const updatedFrahnds = frahndqueue.filter(friend => friend.name!==name)
+                setFrahndqueue(updatedFrahnds)
+                    // this then resets frahndqueue to the updated frahnds list
+                    // I guess you could instead change the vars so that the initial values are dumped straight into useState
+                        // so, that is what I did 
+                        // bc this way the OG queue really is altered and retains that altered state within the session
+                        // you would NOT do it this way if you had a backend - you'd pass along the changes so that it persists beyond a session
+                        // currently, changes do not persist from session to session bc the OG array is hardcoded as initial state
+                        // notice that const frahnds is commented out. Original would have:
+            }
+
+            // now where do you invoke these handling methods for rendering?
+            // it needs to happen in the child component -- here, FrahndsList. Add to where you're returning stuff for rendering in this App component for FrahndsList
+            //just pass it as a prop!
+            // now modify the element you're returning from the FriendsList component to add a button that lets user interact.
+
+            return (
                 <section id="container"> 
-                    <NameComponent name= { name } /> {/*you defined this earlier in line 22 */}
-                    <StatusComponent status= { status } />
+                    <h1>An odd tracker</h1>
+                    {/*Adding form elements to enable usage of handleAddFriend
+                        but why don't I make as a separate component instead? */}
+                    <input 
+                        type='text'
+                        placeholder='Type new friend name'
+                        value= {newFrahnd}
+                        onChange={handleChange}  //need to capture the value of what's entered
+                    />
+                    <button
+                        onClick = { ()=> { handleAddFriend(newFrahnd) }}
+                    >
+                        Submit
+                    </button>
+                    <button
+                        onClick = {clearAll}
+                    >Clear all
+                    {/*this is why I wanted my <ul> to be inside App component, not part of the FrahndsList */}
+                     {/*if this were a legit Form element, you'd have to set some handler for handling submit, prevent default behavior, on the Form level.
+                    Luckily this prolly has no default and needs to be explicitly tied to the input element inputs */}
+                    </button>
+                    <h2>Active friends</h2>
+                    <FrahndsList 
+                        list= {frahndqueue} 
+                        isActive= {true}
+                        onAddFriend = { handleAddFriend }
+                        onRemoveFriend = { handleRemoveFriend }
+                        onActivation = { handleActivation }
+                        // should this also have an Activate function passed but unused?
+                    />
+                    <h2>Inactive friends</h2>
+                    <FrahndsList 
+                        list= {frahndqueue} 
+                        isActive= {false}
+                        onAddFriend = { handleAddFriend }
+                        onRemoveFriend = { handleRemoveFriend }
+                        onActivation = { handleActivation }
+                        // should this also have a deactivate function passed but unused?
+                    />
+                    {/* alt universe
+                    <ul>
+                        <FrahndsList list={ frahnds } /> 
+                    </ul>
+                {set data against a named attribute that becomes the prop key}
+                */}
                 </section>
             )
         }
-
-        /*Warning: ReactDOM.render is no longer supported in React 18. 
-        Use createRoot instead. Until you switch to the new API, your app will behave 
-        as if it's running React 17. 
-        https://reactjs.org/blog/2022/03/08/react-18-upgrade-guide.html#updates-to-client-rendering-apis*/
-        // enabled by script loaded line 11 - react DOM. where do you want React to mount (i.e., render)?
         const root = ReactDOM.createRoot(
             document.querySelector('#app')
         )
-        // root.render(wrapperElement)
         root.render(<App />)
     </script>
+    <!-- It seems like occasionally my JSX comments causes an error - not all, but some
+        
+     -->
 </body>
 </html>
