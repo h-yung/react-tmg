@@ -5,7 +5,7 @@ React fundamentals apps with inline scripts based on Tyler McGinnis' walkthrough
 I'm not using branches the way they're meant to be used. You can check out main branch for day 1 and the next branches for day 2, 3, etc.
 
 ## Day 2
-**Below: A list similar to to-do list, minus edit capabilities**<br>
+**Below: A list similar to to-do list, minus edit capabilities. (Yes, there's a theme.)**<br>
 <img src="https://raw.githubusercontent.com/h-yung/react-tmg/main/day-2-hw.png?token=GHSAT0AAAAAABVMLGSR4UAD7EWCAXBRQRVQYV6DMKA" alt="day 2 screen" width="200"/> 
 
 Have only been using `return` for elements and not at all inside 'handler' functions.
