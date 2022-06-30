@@ -40,8 +40,7 @@
     // create List of clickables for language /queryparam selection
     function RepoChoice(props){
       const choices = ['all', 'javascript', 'ruby','python']
-      const choiceTemplate = 
-        choices.map(choice => (
+      return (choices.map(choice => (
             <button 
               data-name='repo-choice' 
               id= { choice }
@@ -51,8 +50,7 @@
               { choice }
             </button>
           )
-      )
-      return choiceTemplate
+      ))
     }
 
     // show me the results of the API call
