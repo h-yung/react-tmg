@@ -14,6 +14,6 @@ I'm not successfully fooling Suspense or able to use React.lazy to simulate in c
 ## Day 3 hw (day-3-hw)
 Why cannot use arrow function inside the return of a component (RepoChoice)? 🤔
   - "solution": with `{choices}.map(...)` ".map is not a function" - not recognizing the array variable. Use simply `choices.map(...)`
-Taking useRef and useCallback out for a spin, thanks to useEffect: [here](https://reactjs.org/docs/hooks-reference.html#usecallback)
+Taking useCallback out for a spin, thanks to useEffect: [here](https://reactjs.org/docs/hooks-reference.html#usecallback)
   - useCallback: otherwise a new instance of the function keeps getting created, and not equal 
-  - useRef: 
+  - useRef: warning [here](https://medium.com/@teh_builder/ref-objects-inside-useeffect-hooks-eb7c15198780)
