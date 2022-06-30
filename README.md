@@ -1,7 +1,4 @@
-# react-tmg
-
-React fundamentals via TMG
-=======
+# React fundamentals via TMG
 React fundamentals apps with inline scripts based on Tyler McGinnis' walkthroughs, but using hooks instead of classes and React 18. Heavily annotated.
 
 ## Important disclaimer
