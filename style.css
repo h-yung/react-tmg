@@ -58,6 +58,14 @@ button[data-name='repo-choice']:hover{
     border: 2px solid blue;
 }
 
+button[data-name='repo-choice']:focus,
+button[data-name='repo-choice']:focus:hover {
+    color: blue;
+    border: none;
+    cursor: default;
+    background: none;
+}
+
 section[data-function='call-results'] {
     padding: 1rem;
     width: 100%;
