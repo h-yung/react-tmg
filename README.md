@@ -1,5 +1,6 @@
 # React fundamentals via TMG
 React fundamentals apps with inline scripts based on Tyler McGinnis' walkthroughs, but using hooks instead of classes and React 18. Heavily annotated.
+Up to day 3 only.
 
 ## Important disclaimer
 I'm not using branches the way they're meant to be used. You can check out main branch for day 1 and the next branches for day 2, 3, etc.
