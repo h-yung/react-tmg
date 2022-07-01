@@ -24,5 +24,3 @@ Some errors while attempting to use the arrow function inside the return of a co
   Taking useCallback out for a spin, thanks to useEffect: [here](https://reactjs.org/docs/hooks-reference.html#usecallback) to avoid a new instance of the function getting created each time. [Reference used](https://infinitypaul.medium.com/reactjs-useeffect-usecallback-simplified-91e69fb0e7a3).
   - useRef? "useRef doesn’t notify you when its content changes. Mutating the .current property doesn’t cause a re-render." I did not use it here. Warning [here](https://medium.com/@teh_builder/ref-objects-inside-useeffect-hooks-eb7c15198780)
 Want to redo styling with CSS Grid.
-
-**Incomplete:** Loader interim component.
