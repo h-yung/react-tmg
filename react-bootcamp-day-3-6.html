@@ -106,7 +106,7 @@
       // get param and data
       const whichRepo = useCallback(repo => {
         // useCallback prevents fresh instance creation again of the same function
-          // console.log(`You chose ${repo}!`) this does not work, is undefined/ Runs too soon?
+          // console.log(`You chose ${repo}!`) this does not work, is undefined/ because it is undefined when whichRepo is created?
         setIsLoading(true);
         API.fetchPopularRepos(repo)
           .then(repoResults => {
