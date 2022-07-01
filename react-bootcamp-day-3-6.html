@@ -28,12 +28,6 @@
 
   <script type='text/babel'>
 
-    // Loading component, deferred for now
-    function Loading(){
-      console.log(`I am loading`)
-      return
-    }
-
     // create List of clickables for language /queryparam selection
     function RepoChoice(props){
       const choices = ['all', 'javascript', 'ruby','python']
@@ -50,6 +44,36 @@
       ))
     }
 
+    // Loading component, would be called inside RepoResults
+    function Loader(props){
+      const { useState } = React;
+      const [loading, setLoading] = useState('Loading')
+      let dot = "."
+      let newText;
+      function updateText(){
+          newText = loading;
+          newText += dot;
+          if (newText.length > 10){
+              dot = ''
+              newText = 'Loading'
+          }
+          console.log(newText) //this shows things do stop
+          setLoading(newText) //this also kicks off a new render
+          dot += '.'
+          return newText
+      }
+      const loadCall = setTimeout(updateText, 300)
+      
+      if (props.isLoading === false){
+          console.log(`this value should say false: ${value}`) //this never prints?
+          clearTimeout(loadCall) //worked w timeout but not interval
+      }
+      
+      return (
+          <h3> { loading }</h3>
+      )
+  }
+
     // show me the results of the API call
     function RepoResults(props){
       // props.data will give you the API results
@@ -59,18 +83,19 @@
           className='result-item'
         > 
           {/*just cping this next part*/}
-          <ul>
-              <li><a href={result.html_url}>{result.name}</a></li>
-              <li>@{result.owner.login}</li>
-              <li>{result.stargazers_count} stars</li>
+            <ul>
+                <li><a href={result.html_url}>{result.name}</a></li>
+                <li>@{result.owner.login}</li>
+                <li>{result.stargazers_count} stars</li>
             </ul>
         </li>
       ))
-      return (
-        <ul>
-          { resultList }
-        </ul>
-      )
+      return props.isLoading ? (<Loader isLoading = {props.isLoading} />) : 
+        (
+          <ul>
+            { resultList }
+          </ul>
+        )
     }
   
     // App component
@@ -79,18 +104,18 @@
       const { useState, useEffect, useCallback } = React;
       // const [query, setQuery] = useState('all');
       const [results,setResults] = useState([]); //empty until useEffect calls whichRepo default 'all' and populates results
-
+      const [isLoading, setIsLoading] = useState(false);
       // get param and data
       const whichRepo = useCallback(repo => {
         // useCallback prevents fresh instance creation again of the same function
           // console.log(`You chose ${repo}!`) this does not work, is undefined/ Runs too soon?
-        // setIsLoading(true);
-          API.fetchPopularRepos(repo)
-            .then(repoResults => {
-                repoResults.map(repoResult => Object.assign(repoResult, {key: repoResults.indexOf(repoResult)}))
-                setResults(repoResults);
-                // setIsLoading(false);
-            })
+        setIsLoading(true);
+        API.fetchPopularRepos(repo)
+          .then(repoResults => {
+              repoResults.map(repoResult => Object.assign(repoResult, {key: repoResults.indexOf(repoResult)}))
+              setResults(repoResults);
+              setIsLoading(false);
+          })
       })
 
       // useEffect - get data from the window API
@@ -103,11 +128,13 @@
       return (
         <main>
           <section data-function='choice'>
-            <RepoChoice param= {whichRepo} />
+            <RepoChoice param={whichRepo} />
           </section>
-          
           <section data-function='call-results'>
-            <RepoResults data={results} />
+              <RepoResults 
+                data={results}
+                isLoading={isLoading} 
+              />
           </section>
         </main>
       )
