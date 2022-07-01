@@ -65,10 +65,8 @@
       const loadCall = setTimeout(updateText, 300)
       
       if (props.isLoading === false){
-          console.log(`this value should say false: ${value}`) //this never prints?
-          clearTimeout(loadCall) //worked w timeout but not interval
+          clearTimeout(loadCall) //worked w timeout but not interval. end the cycle when Loader is no longer shown.
       }
-      
       return (
           <h3> { loading }</h3>
       )
